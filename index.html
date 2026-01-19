@@ -1,878 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algorithm Visualizer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        main {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            grid-template-rows: auto 1fr;
-            gap: 20px;
-            height: calc(100vh - 200px);
-        }
-
-        .controls-panel {
-            grid-column: 1;
-            grid-row: 1 / -1;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow-y: auto;
-        }
-
-        .visualization-panel {
-            grid-column: 2;
-            grid-row: 1;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .info-panel {
-            grid-column: 2;
-            grid-row: 2;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow-y: auto;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-        }
-
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #555;
-        }
-
-        select, input[type="range"] {
-            width: 100%;
-            padding: 8px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .playback-controls button {
-            min-width: 80px;
-            font-size: 12px;
-            padding: 8px 12px;
-        }
-
-        .array-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        #array-visualization {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            height: 100%;
-            width: 100%;
-            gap: 3px;
-            padding: 20px;
-        }
-
-        .array-bar {
-            background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 4px 4px 0 0;
-            min-width: 30px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .array-bar.comparing {
-            background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
-            transform: scale(1.05);
-        }
-
-        .array-bar.sorted {
-            background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
-        }
-
-        .array-bar.pivot {
-            background: linear-gradient(180deg, #9C27B0 0%, #7B1FA2 100%);
-            transform: scale(1.1);
-        }
-
-        .array-bar.highlighted {
-            background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
-            transform: scale(1.03);
-        }
-
-        .progress-container {
-            background: #e1e5e9;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        #progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .algorithm-info h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .algorithm-complexity {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .step-explanation {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid #2196F3;
-        }
-
-        .step-explanation h4 {
-            color: #1976D2;
-            margin-bottom: 8px;
-        }
-
-        .array-display {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .array-display #current-array {
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            word-wrap: break-word;
-        }
-
-        #size-display, #speed-display, #step-counter {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        @media (max-width: 1024px) {
-            main {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
-            }
-            
-            .controls-panel {
-                grid-column: 1;
-                grid-row: 1;
-            }
-            
-            .visualization-panel {
-                grid-column: 1;
-                grid-row: 2;
-                min-height: 300px;
-            }
-            
-            .info-panel {
-                grid-column: 1;
-                grid-row: 3;
-            }
-        }
-
-        .array-bar-value {
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
-        }
-    </style>
+    <title>Glairozz Blair P. Punay Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>Algorithm Visualizer</h1>
-            <p>Interactive Educational Tool for Understanding Algorithms</p>
-        </header>
-
-        <main>
-            <div class="controls-panel">
-                <div class="control-group">
-                    <label for="algorithm-select">Algorithm:</label>
-                    <select id="algorithm-select">
-                        <option value="">Select Algorithm</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
-                    <label for="array-size">Array Size:</label>
-                    <input type="range" id="array-size" min="5" max="30" value="10">
-                    <span id="size-display">10</span>
-                </div>
-
-                <div class="control-group">
-                    <button id="generate-btn">Generate Array</button>
-                    <button id="execute-btn">Execute</button>
-                </div>
-
-                <div class="control-group playback-controls">
-                    <button id="play-btn" disabled>▶ Play</button>
-                    <button id="pause-btn" disabled>⏸ Pause</button>
-                    <button id="step-forward-btn" disabled>→ Step</button>
-                    <button id="step-backward-btn" disabled>← Step Back</button>
-                    <button id="reset-btn" disabled>⟲ Reset</button>
-                </div>
-
-                <div class="control-group">
-                    <label for="speed-control">Speed:</label>
-                    <input type="range" id="speed-control" min="0.1" max="3" step="0.1" value="1">
-                    <span id="speed-display">1.0x</span>
-                </div>
-
-                <div class="control-group">
-                    <label for="progress-bar">Progress:</label>
-                    <div class="progress-container">
-                        <div id="progress-bar"></div>
-                    </div>
-                    <span id="step-counter">0 / 0</span>
-                </div>
-            </div>
-
-            <div class="visualization-panel">
-                <div class="array-container">
-                    <div id="array-visualization"></div>
-                </div>
-            </div>
-
-            <div class="info-panel">
-                <div class="algorithm-info">
-                    <h3 id="algorithm-name">Select an Algorithm</h3>
-                    <p id="algorithm-description"></p>
-                    <div id="algorithm-complexity"></div>
-                </div>
-
-                <div class="step-explanation">
-                    <h4>Current Step:</h4>
-                    <p id="step-explanation-text"></p>
-                </div>
-
-                <div class="array-display">
-                    <h4>Array:</h4>
-                    <div id="current-array"></div>
-                </div>
-            </div>
-        </main>
+    <canvas id="particles-canvas"></canvas>
+    <div id="loading-screen">
+        <h2 id="user-name">
+            <span>G</span><span>l</span><span>a</span><span>i</span><span>r</span><span>o</span><span>z</span><span>z</span>
+            <span class="space"></span>
+            <span>B</span><span>l</span><span>a</span><span>i</span><span>r</span>
+            <span class="space"></span>
+            <span>P</span><span>.</span>
+            <span class="space"></span>
+            <span>P</span><span>u</span><span>n</span><span>a</span><span>y</span>
+        </h2>
+        <p class="status-text">Aspiring Software Engineer</p>
+        <div class="loading-bar">
+            <div id="bar-fill"></div>
+        </div>
     </div>
 
-    <script>
-        class SortingAlgorithm {
-            constructor(name, description, complexity, overview) {
-                this.name = name;
-                this.description = description;
-                this.complexity = complexity;
-                this.overview = overview;
-            }
+    <header class="nav-bar">
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="#about">About Me</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#certificates">Certificates</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-            execute(array) {
-                throw new Error('Execute method must be implemented');
-            }
-        }
+    <div id="content">
+        <header class="header">
+            <img src="profile.jpg" alt="Profile Photo" class="profile-img" width="200" height="200">
+            <div class="name-subtitle">
+                <h1 id="name">Glairozz Blair P. Punay</h1>
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="typewriter">
+                            <span id="typed-text"></span>
+                            <span class="cursor">|</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        class BubbleSort extends SortingAlgorithm {
-            constructor() {
-                super("Bubble Sort", 
-                    "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.",
-                    {
-                        best: "O(n)",
-                        average: "O(n²)",
-                        worst: "O(n²)",
-                        space: "O(1)"
-                    },
-                    {
-                        strategy: "Comparison-based sorting",
-                        key_idea: "Repeatedly bubble up the largest element to its correct position",
-                        when_to_use: "Small datasets or nearly sorted data"
-                    }
-                );
-            }
 
-            *execute(array) {
-                const arr = [...array];
-                const n = arr.length;
-                
-                for (let i = 0; i < n - 1; i++) {
-                    for (let j = 0; j < n - i - 1; j++) {
-                        yield {
-                            array: [...arr],
-                            comparing: [j, j + 1],
-                            sorted: Array.from({length: i}, (_, k) => n - 1 - k),
-                            explanation: `Comparing elements at positions ${j} and ${j + 1}: ${arr[j]} and ${arr[j + 1]}`
-                        };
-                        
-                        if (arr[j] > arr[j + 1]) {
-                            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-                            yield {
-                                array: [...arr],
-                                comparing: [],
-                                swapping: [j, j + 1],
-                                sorted: Array.from({length: i}, (_, k) => n - 1 - k),
-                                explanation: `Swapping elements: ${arr[j + 1]} and ${arr[j]}`
-                            };
-                        }
-                    }
-                }
-                
-                yield {
-                    array: [...arr],
-                    comparing: [],
-                    sorted: Array.from({length: n}, (_, i) => i),
-                    explanation: "Array is now sorted!"
-                };
-            }
-        }
+        <section class="section" id="about">
+            <h2>About Me</h2>
+            <div class="about-row">
+                <div class="about-image">
+                    <img src="me photo.png" alt="me">
+                </div>
+                <div class="about-containers">
+                    <div class="about-container">
+                        <p>My name is <strong>Glairozz Blair Punay</strong>, I’m a 1st-year aspiring software engineer who loves diving into new ideas, building things from scratch, and figuring out how technology actually works behind the scenes.</p>
+                    </div>
+                    <div class="about-container">
+                        <p>I’m the type of person who can hype up a room and spark conversations—but also the one who quietly zones in when it’s time to code, learn, or create something meaningful.</p>
+                    </div>
+                    <div class="about-container">
+                        <p>Software engineering isn’t just a career path—it’s a space where I get to solve problems, express creativity, and keep leveling up one project at a time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        class QuickSort extends SortingAlgorithm {
-            constructor() {
-                super("Quick Sort", 
-                    "Quick Sort picks a pivot element and partitions the array around it, then recursively sorts the sub-arrays.",
-                    {
-                        best: "O(n log n)",
-                        average: "O(n log n)",
-                        worst: "O(n²)",
-                        space: "O(log n)"
-                    },
-                    {
-                        strategy: "Divide and conquer",
-                        key_idea: "Partition array around a pivot and recursively sort sub-arrays",
-                        when_to_use: "Large datasets where average case performance is important"
-                    }
-                );
-            }
 
-            *execute(array) {
-                const arr = [...array];
-                
-                function* quickSortHelper(low, high, sorted) {
-                    if (low < high) {
-                        const pivotIndex = yield* partition(low, high, sorted);
-                        yield* quickSortHelper(low, pivotIndex - 1, sorted);
-                        yield* quickSortHelper(pivotIndex + 1, high, [...sorted, pivotIndex]);
-                    }
-                }
 
-                function* partition(low, high, sorted) {
-                    const pivot = arr[high];
-                    yield {
-                        array: [...arr],
-                        pivot: [high],
-                        comparing: [],
-                        sorted,
-                        explanation: `Choosing pivot element: ${pivot} at position ${high}`
-                    };
-                    
-                    let i = low - 1;
-                    
-                    for (let j = low; j < high; j++) {
-                        yield {
-                            array: [...arr],
-                            pivot: [high],
-                            comparing: [j],
-                            sorted,
-                            explanation: `Comparing ${arr[j]} with pivot ${pivot}`
-                        };
-                        
-                        if (arr[j] < pivot) {
-                            i++;
-                            if (i !== j) {
-                                [arr[i], arr[j]] = [arr[j], arr[i]];
-                                yield {
-                                    array: [...arr],
-                                    pivot: [high],
-                                    swapping: [i, j],
-                                    sorted,
-                                    explanation: `Moving ${arr[j]} to left of pivot`
-                                };
-                            }
-                        }
-                    }
-                    
-                    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-                    yield {
-                        array: [...arr],
-                        pivot: [],
-                        swapping: [i + 1, high],
-                        sorted,
-                        explanation: `Placing pivot ${pivot} in its final position`
-                    };
-                    
-                    return i + 1;
-                }
+        <section class="section" id="education">
+            <h2>Education</h2>
+            <div class="education-row">
+                <div class="education-box">
+                    <div class="edu-content">
+                        <h4>2025 - Present</h4>
+                        <p class="highlight-text" id="program">Bachelor of Science in Computer Science</p>
+                        <p>Manuel S. Enverga University Foundation</p>
+                    </div>
+                    <img src="seal/mseufseal.png" class="edu-logo">
+                </div>
 
-                yield* quickSortHelper(0, arr.length - 1, []);
-                
-                yield {
-                    array: [...arr],
-                    comparing: [],
-                    sorted: Array.from({length: arr.length}, (_, i) => i),
-                    explanation: "Array is now sorted!"
-                };
-            }
-        }
+                <div class="education-box">
+                    <div class="edu-content">
+                        <h4>2023 - 2025</h4>
+                        <p class="highlight-text track">Science, Technology, Engineering, and Mathematics</p>
+                        <p>Elias A. Salvador National High School</p>
+                    </div>
+                    <img src="seal/easnhslogo.jpg" class="edu-logo">
+                </div>
+            </div>
+        </section>
 
-        class MergeSort extends SortingAlgorithm {
-            constructor() {
-                super("Merge Sort", 
-                    "Merge Sort divides the array into two halves, recursively sorts them, and then merges the sorted halves.",
-                    {
-                        best: "O(n log n)",
-                        average: "O(n log n)",
-                        worst: "O(n log n)",
-                        space: "O(n)"
-                    },
-                    {
-                        strategy: "Divide and conquer",
-                        key_idea: "Recursively divide and merge sorted sub-arrays",
-                        when_to_use: "When stable sorting with guaranteed O(n log n) performance is needed"
-                    }
-                );
-            }
 
-            *execute(array) {
-                const arr = [...array];
-                
-                function* mergeSortHelper(left, right, sorted) {
-                    if (left < right) {
-                        const mid = Math.floor((left + right) / 2);
-                        yield* mergeSortHelper(left, mid, sorted);
-                        yield* mergeSortHelper(mid + 1, right, sorted);
-                        yield* merge(left, mid, right, sorted);
-                    }
-                }
+        <section class="software-tools-section">
+            <h2>Softwares & Skills</h2>
+            <div class="softwares-container">
+                <h2>Software</h2>
+                <div class="softwares-track">
+                    <div class="software"><img src="software/python.png" alt="1"></div>
+                    <div class="software"><img src="software/js.png" alt="2"></div>
+                    <div class="software"><img src="software/html.png" alt="3"></div>
+                    <div class="software"><img src="software/css.png" alt="4"></div>
+                    <div class="software"><img src="software/bootstrap.png" alt="5"></div>
+                    <div class="software"><img src="software/react.png" alt="6"></div>
+                    <div class="software"><img src="software/nodejs.png" alt="7"></div>
+                    <div class="software"><img src="software/git.png" alt="8"></div>
 
-                function* merge(left, mid, right, sorted) {
-                    const leftArr = arr.slice(left, mid + 1);
-                    const rightArr = arr.slice(mid + 1, right + 1);
-                    
-                    yield {
-                        array: [...arr],
-                        comparing: Array.from({length: right - left + 1}, (_, i) => left + i),
-                        sorted,
-                        explanation: `Merging sub-arrays [${leftArr.join(', ')}] and [${rightArr.join(', ')}]`
-                    };
-                    
-                    let i = 0, j = 0, k = left;
-                    
-                    while (i < leftArr.length && j < rightArr.length) {
-                        if (leftArr[i] <= rightArr[j]) {
-                            arr[k] = leftArr[i];
-                            i++;
-                        } else {
-                            arr[k] = rightArr[j];
-                            j++;
-                        }
-                        k++;
-                    }
-                    
-                    while (i < leftArr.length) {
-                        arr[k] = leftArr[i];
-                        i++;
-                        k++;
-                    }
-                    
-                    while (j < rightArr.length) {
-                        arr[k] = rightArr[j];
-                        j++;
-                        k++;
-                    }
-                    
-                    yield {
-                        array: [...arr],
-                        comparing: [],
-                        sorted: [...sorted, ...Array.from({length: right - left + 1}, (_, i) => left + i)],
-                        explanation: `Merged result: [${arr.slice(left, right + 1).join(', ')}]`
-                    };
-                }
+                    <div class="software"><img src="software/python.png" alt="1"></div>
+                    <div class="software"><img src="software/js.png" alt="2"></div>
+                    <div class="software"><img src="software/html.png" alt="3"></div>
+                    <div class="software"><img src="software/css.png" alt="4"></div>
+                    <div class="software"><img src="software/bootstrap.png" alt="5"></div>
+                    <div class="software"><img src="software/react.png" alt="6"></div>
+                    <div class="software"><img src="software/nodejs.png" alt="7"></div>
+                    <div class="software"><img src="software/git.png" alt="8"></div>
 
-                yield* mergeSortHelper(0, arr.length - 1, []);
-                
-                yield {
-                    array: [...arr],
-                    comparing: [],
-                    sorted: Array.from({length: arr.length}, (_, i) => i),
-                    explanation: "Array is now sorted!"
-                };
-            }
-        }
+                    <div class="software"><img src="software/python.png" alt="1"></div>
+                    <div class="software"><img src="software/js.png" alt="2"></div>
+                    <div class="software"><img src="software/html.png" alt="3"></div>
+                    <div class="software"><img src="software/css.png" alt="4"></div>
+                    <div class="software"><img src="software/bootstrap.png" alt="5"></div>
+                    <div class="software"><img src="software/react.png" alt="6"></div>
+                    <div class="software"><img src="software/nodejs.png" alt="7"></div>
+                    <div class="software"><img src="software/git.png" alt="8"></div>
+                </div>
+            </div>
 
-        class AlgorithmVisualizer {
-            constructor() {
-                this.algorithms = {
-                    'bubble_sort': new BubbleSort(),
-                    'quick_sort': new QuickSort(),
-                    'merge_sort': new MergeSort()
-                };
-                this.currentArray = [];
-                this.timeline = [];
-                this.currentPosition = -1;
-                this.isPlaying = false;
-                this.playbackSpeed = 1.0;
-                this.playbackInterval = null;
-                
-                this.initializeElements();
-                this.loadAlgorithms();
-                this.attachEventListeners();
-                this.generateArray();
-            }
-            
-            initializeElements() {
-                this.elements = {
-                    algorithmSelect: document.getElementById('algorithm-select'),
-                    arraySize: document.getElementById('array-size'),
-                    sizeDisplay: document.getElementById('size-display'),
-                    generateBtn: document.getElementById('generate-btn'),
-                    executeBtn: document.getElementById('execute-btn'),
-                    playBtn: document.getElementById('play-btn'),
-                    pauseBtn: document.getElementById('pause-btn'),
-                    stepForwardBtn: document.getElementById('step-forward-btn'),
-                    stepBackwardBtn: document.getElementById('step-backward-btn'),
-                    resetBtn: document.getElementById('reset-btn'),
-                    speedControl: document.getElementById('speed-control'),
-                    speedDisplay: document.getElementById('speed-display'),
-                    progressBar: document.getElementById('progress-bar'),
-                    stepCounter: document.getElementById('step-counter'),
-                    arrayVisualization: document.getElementById('array-visualization'),
-                    algorithmName: document.getElementById('algorithm-name'),
-                    algorithmDescription: document.getElementById('algorithm-description'),
-                    algorithmComplexity: document.getElementById('algorithm-complexity'),
-                    stepExplanationText: document.getElementById('step-explanation-text'),
-                    currentArray: document.getElementById('current-array')
-                };
-            }
-            
-            loadAlgorithms() {
-                Object.entries(this.algorithms).forEach(([key, info]) => {
-                    const option = document.createElement('option');
-                    option.value = key;
-                    option.textContent = info.name;
-                    this.elements.algorithmSelect.appendChild(option);
-                });
-            }
-            
-            attachEventListeners() {
-                this.elements.arraySize.addEventListener('input', (e) => {
-                    this.elements.sizeDisplay.textContent = e.target.value;
-                });
-                
-                this.elements.speedControl.addEventListener('input', (e) => {
-                    this.playbackSpeed = parseFloat(e.target.value);
-                    this.elements.speedDisplay.textContent = `${this.playbackSpeed}x`;
-                });
-                
-                this.elements.generateBtn.addEventListener('click', () => this.generateArray());
-                this.elements.executeBtn.addEventListener('click', () => this.executeAlgorithm());
-                this.elements.playBtn.addEventListener('click', () => this.play());
-                this.elements.pauseBtn.addEventListener('click', () => this.pause());
-                this.elements.stepForwardBtn.addEventListener('click', () => this.stepForward());
-                this.elements.stepBackwardBtn.addEventListener('click', () => this.stepBackward());
-                this.elements.resetBtn.addEventListener('click', () => this.reset());
-                
-                this.elements.algorithmSelect.addEventListener('change', (e) => {
-                    this.updateAlgorithmInfo(e.target.value);
-                });
-            }
-            
-            generateArray() {
-                const size = parseInt(this.elements.arraySize.value);
-                this.currentArray = Array.from({length: size}, () => Math.floor(Math.random() * 50) + 1);
-                this.timeline = [];
-                this.currentPosition = -1;
-                this.renderArray();
-                this.updateArrayDisplay();
-                this.disablePlaybackControls();
-            }
-            
-            executeAlgorithm() {
-                const algorithmKey = this.elements.algorithmSelect.value;
-                if (!algorithmKey) {
-                    alert('Please select an algorithm');
-                    return;
-                }
-                
-                const algorithm = this.algorithms[algorithmKey];
-                this.timeline = Array.from(algorithm.execute(this.currentArray));
-                this.currentPosition = -1;
-                this.enablePlaybackControls();
-                this.reset();
-            }
-            
-            updateAlgorithmInfo(algorithmKey) {
-                if (!algorithmKey || !this.algorithms[algorithmKey]) {
-                    this.elements.algorithmName.textContent = 'Select an Algorithm';
-                    this.elements.algorithmDescription.textContent = '';
-                    this.elements.algorithmComplexity.innerHTML = '';
-                    return;
-                }
-                
-                const algorithm = this.algorithms[algorithmKey];
-                this.elements.algorithmName.textContent = algorithm.name;
-                this.elements.algorithmDescription.textContent = algorithm.description;
-                
-                if (algorithm.complexity) {
-                    this.elements.algorithmComplexity.innerHTML = `
-                        <h4>Complexity Analysis:</h4>
-                        <p>Best: ${algorithm.complexity.best}</p>
-                        <p>Average: ${algorithm.complexity.average}</p>
-                        <p>Worst: ${algorithm.complexity.worst}</p>
-                        <p>Space: ${algorithm.complexity.space}</p>
-                    `;
-                }
-                
-                if (algorithm.overview) {
-                    this.elements.algorithmComplexity.innerHTML += `
-                        <h4>Algorithm Overview:</h4>
-                        <p><strong>Strategy:</strong> ${algorithm.overview.strategy}</p>
-                        <p><strong>Key Idea:</strong> ${algorithm.overview.key_idea}</p>
-                        <p><strong>Best For:</strong> ${algorithm.overview.when_to_use}</p>
-                    `;
-                }
-            }
-            
-            renderArray() {
-                this.elements.arrayVisualization.innerHTML = '';
-                
-                let state, values, maxValue;
-                
-                if (this.timeline.length > 0 && this.currentPosition >= 0 && this.currentPosition < this.timeline.length) {
-                    state = this.timeline[this.currentPosition];
-                    values = state.array;
-                    maxValue = Math.max(...values);
-                } else {
-                    values = this.currentArray;
-                    maxValue = Math.max(...values);
-                    state = { comparing: [], swapping: [], sorted: [], pivot: [] };
-                }
-                
-                values.forEach((value, index) => {
-                    const bar = this.createArrayBar(value, index, maxValue, state);
-                    this.elements.arrayVisualization.appendChild(bar);
-                });
-            }
-            
-            createArrayBar(value, index, maxValue, state) {
-                const bar = document.createElement('div');
-                bar.className = 'array-bar';
-                bar.style.height = `${(value / maxValue) * 80}%`;
-                
-                if (state.sorted.includes(index)) {
-                    bar.classList.add('sorted');
-                } else if (state.pivot && state.pivot.includes(index)) {
-                    bar.classList.add('pivot');
-                } else if (state.comparing.includes(index)) {
-                    bar.classList.add('comparing');
-                } else if (state.swapping && state.swapping.includes(index)) {
-                    bar.classList.add('highlighted');
-                }
-                
-                const valueLabel = document.createElement('div');
-                valueLabel.className = 'array-bar-value';
-                valueLabel.textContent = value;
-                bar.appendChild(valueLabel);
-                
-                return bar;
-            }
-            
-            updateArrayDisplay() {
-                if (this.timeline.length > 0 && this.currentPosition >= 0 && this.currentPosition < this.timeline.length) {
-                    const state = this.timeline[this.currentPosition];
-                    this.elements.currentArray.textContent = `[${state.array.join(', ')}]`;
-                } else {
-                    this.elements.currentArray.textContent = `[${this.currentArray.join(', ')}]`;
-                }
-            }
-            
-            updateStepExplanation() {
-                if (this.timeline.length > 0 && this.currentPosition >= 0 && this.currentPosition < this.timeline.length) {
-                    const state = this.timeline[this.currentPosition];
-                    this.elements.stepExplanationText.textContent = state.explanation;
-                } else {
-                    this.elements.stepExplanationText.textContent = 'No step in progress';
-                }
-            }
-            
-            updateProgress() {
-                if (this.timeline.length === 0) return;
-                
-                const totalSteps = this.timeline.length;
-                const currentStep = Math.max(0, this.currentPosition + 1);
-                const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
-                
-                this.elements.progressBar.style.width = `${progress}%`;
-                this.elements.stepCounter.textContent = `${currentStep} / ${totalSteps}`;
-            }
-            
-            enablePlaybackControls() {
-                this.elements.playBtn.disabled = false;
-                this.elements.pauseBtn.disabled = false;
-                this.elements.stepForwardBtn.disabled = false;
-                this.elements.stepBackwardBtn.disabled = false;
-                this.elements.resetBtn.disabled = false;
-            }
-            
-            disablePlaybackControls() {
-                this.elements.playBtn.disabled = true;
-                this.elements.pauseBtn.disabled = true;
-                this.elements.stepForwardBtn.disabled = true;
-                this.elements.stepBackwardBtn.disabled = true;
-                this.elements.resetBtn.disabled = true;
-            }
-            
-            play() {
-                if (this.timeline.length === 0 || this.isPlaying) return;
-                
-                this.isPlaying = true;
-                const interval = 1000 / this.playbackSpeed;
-                
-                this.playbackInterval = setInterval(() => {
-                    if (this.currentPosition < this.timeline.length - 1) {
-                        this.stepForward();
-                    } else {
-                        this.pause();
-                    }
-                }, interval);
-            }
-            
-            pause() {
-                this.isPlaying = false;
-                if (this.playbackInterval) {
-                    clearInterval(this.playbackInterval);
-                    this.playbackInterval = null;
-                }
-            }
-            
-            stepForward() {
-                if (this.timeline.length === 0) return;
-                
-                if (this.currentPosition < this.timeline.length - 1) {
-                    this.currentPosition++;
-                    this.updateVisualization();
-                }
-            }
-            
-            stepBackward() {
-                if (this.timeline.length === 0) return;
-                
-                if (this.currentPosition > -1) {
-                    this.currentPosition--;
-                    this.updateVisualization();
-                }
-            }
-            
-            reset() {
-                this.pause();
-                this.currentPosition = -1;
-                this.updateVisualization();
-            }
-            
-            updateVisualization() {
-                this.renderArray();
-                this.updateArrayDisplay();
-                this.updateStepExplanation();
-                this.updateProgress();
-            }
-        }
+            <div class="tools-container">
+                <h2>Tools</h2>
+                <div class="tools-track">
+                    <div class="tool"><img src="tools/vscode.png" alt="1"></div>
+                    <div class="tool"><img src="tools/canva.svg" alt="2"></div>
+                    <div class="tool"><img src="tools/figma.png" alt="3"></div>
+                    <div class="tool"><img src="tools/github.webp" alt="4"></div>
+                    <div class="tool"><img src="tools/pycharm.png" alt="5"></div>
+                    <div class="tool"><img src="tools/adobe.png" alt="6"></div>
+                    <div class="tool"><img src="tools/behance.png" alt="7"></div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            new AlgorithmVisualizer();
-        });
-    </script>
+                    <div class="tool"><img src="tools/vscode.png" alt="1"></div>
+                    <div class="tool"><img src="tools/canva.svg" alt="2"></div>
+                    <div class="tool"><img src="tools/figma.png" alt="3"></div>
+                    <div class="tool"><img src="tools/github.webp" alt="4"></div>
+                    <div class="tool"><img src="tools/pycharm.png" alt="5"></div>
+                    <div class="tool"><img src="tools/adobe.png" alt="6"></div>
+                    <div class="tool"><img src="tools/behance.png" alt="7"></div>
+
+                    <div class="tool"><img src="tools/vscode.png" alt="1"></div>
+                    <div class="tool"><img src="tools/canva.svg" alt="2"></div>
+                    <div class="tool"><img src="tools/figma.png" alt="3"></div>
+                    <div class="tool"><img src="tools/github.webp" alt="4"></div>
+                    <div class="tool"><img src="tools/pycharm.png" alt="5"></div>
+                    <div class="tool"><img src="tools/adobe.png" alt="6"></div>
+                    <div class="tool"><img src="tools/behance.png" alt="7"></div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="section" id="certificates">
+            <h2>Certificates</h2>
+            <div class="certificates-container">
+                <div class="certificates">
+                    <img src="certificates/python for everybody.png" alt="Programming for Everybody certificate">
+                    <p><a href="https://www.coursera.org/learn/python/home/module/1" target="_blank" rel="noopener noreferrer"><strong>Programming for Everybody (Python)</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/intro to computers.png" alt="Introduction to Computers certificate">
+                    <p><a href="https://www.coursera.org/learn/introduction-to-computers/home/welcome" target="_blank" rel="noopener noreferrer"><strong>Introduction to Computers</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/hello python.png" alt="Hello Python certificate">
+                    <p><a href="#" target="_blank" rel="noopener noreferrer"><strong>Hello Python: Introduction to Programming</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/functions and conditional statements.png" alt="Functions and Conditional Statements certificate">
+                    <p><a href="#" target="_blank" rel="noopener noreferrer"><strong>Functions and Conditional Statements</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/loops and strings.png" alt="Loops and Strings certificate">
+                    <p><a href="#" target="_blank" rel="noopener noreferrer"><strong>Loops and Strings in Python</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/python selection.png" alt="Python selection certificate">
+                    <p><a href="https://www.coursera.org/learn/codio-python-basics/home/module/1" target="_blank" rel="noopener noreferrer"><strong>Python Basics: Selection and Iteration</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/python structure.png" alt="Python structures certificate">
+                    <p><a href="https://www.coursera.org/learn/python-basic-structures-lists-strings-and-files/home/module/1" target="_blank" rel="noopener noreferrer"><strong>Python Basic Structures: Lists, Strings, and Files</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/pygame.png" alt="Pygame certificate">
+                    <p><a href="https://www.coursera.org/learn/python-game-development-with-pygame/home/module/1" target="_blank" rel="noopener noreferrer"><strong>Python Game Development with Pygame</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/frontend dev.png" alt="Frontend Development">
+                    <p><a href="https://www.coursera.org/learn/introduction-to-front-end-development/home/week/1" target="_blank" rel="noopener noreferrer"><strong>Introduction to Frontend Development</strong></a></p>
+                </div>
+                <div class="certificates">
+                    <img src="certificates/data structures.png" alt="Data Structures">
+                    <p><a href="#" target="_blank" rel="noopener noreferrer"><strong>Data Structures</strong></a></p>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="section" id="projects">
+            <h2>Projects</h2>
+            <div class="projects-container">
+                <div class="project-item">
+                    <img src="projects/egd.png" alt="Project 1">
+                    <a href="https://github.com/glairozzblair-gif/Pygame-Ethans-Great-Dungeon.git"><strong>Ethan's Great Dungeon</strong></a>
+                    <p>
+                        A simple 2D dungeon crawler game made using Pygame library in Python. Features multiple levels, enemies, and collectible items.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/lotr.png" alt="Project 2">
+                    <a href="https://glairozz.github.io/lord-of-the-rings/"><strong>Lord of the Rings Library</strong></a>
+                    <p>
+                        A comprehensive website showcasing information about the Lord of the Rings series using HTML, CSS, and JavaScript. Features character profiles, timeline, and interactive elements.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/got&hotd.png" alt="Project 3">
+                    <a href="https://glairozz.github.io/A-Song-of-Ice-and-Fire---The-Dance-of-The-Dragons/"><strong>A Song of Ice and Fire & The Dance of the Dragons Library</strong></a>
+                    <p>
+                        A detailed website showcasing information about the A Song of Ice and Fire & The Dance of the Dragons series, built with HTML, CSS, and JavaScript.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/spygame.jpg" alt="Project 4">
+                    <a href="https://glairozz.github.io/Spy-game/"><strong>Spy Adventure Game</strong></a>
+                    <p>
+                        An interactive spy-themed adventure game developed with Python and Pygame. Features stealth mechanics, mission-based gameplay, and engaging storyline.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/drunkcards.png" alt="Project 5">
+                    <a href="https://glairozz.github.io/drunk-cards/"><strong>Drunk Cards Game</strong></a>
+                    <p>
+                        A fun and interactive card game with unique drinking game mechanics. Built with Python featuring animated card movements and game logic.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/rubics cube.jpg" alt="Project 6">
+                    <a href="https://glairozz.github.io/Rubic-Cube/"><strong>Rubics Cube</strong></a>
+                    <p>
+                        A virtual Rubik's Cube simulator developed using Python and Pygame. Allows users to manipulate and solve the cube with intuitive controls.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/firstportfolio.png" alt="Project 7">
+                    <a href="https://glairozz.github.io/Glairozz-Portfolio/"><strong>First Portfolio Website</strong></a>
+                    <p>
+                        My first personal portfolio website showcasing web development skills. Built with HTML, CSS, and JavaScript with responsive design and smooth animations.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/meet me.png" alt="Project 8">
+                    <a href="https://glairozz.github.io/graphic-design-portfolio-practice/"><strong>Graphic Design Portfolio </strong></a>
+                    <p>
+                        A collection of my graphic design works including posters, logos, and social media graphics. Created using Canva and Adobe Photoshop.
+                    </p>
+                </div>
+                <div class="project-item">
+                    <img src="projects/algo visualizer.png" alt="Project 9">
+                    <a href="https://glairozz.github.io/python-algorithm-visualizer/"><strong>Python Algorithm Visualizer</strong></a>
+                    <p>
+                        An interactive visual tool for understanding how various algorithms work step-by-step. Built with Python, it provides visual representations of sorting algorithms, pathfinding, and data structures to help users learn computer science concepts.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <h2 id="contact-title">REACH OUT</h2>
+            <ul class="contact">
+                <li>
+                    <a href="https://www.linkedin.com/in/glairozz-blair-punay-11259a380/"><img src="contacts/linkedin.png" alt="LinkedIn"></a>
+                </li>
+                <li>
+                    <a href="https://github.com/Glairozz"><img src="contacts/github.png" alt="Github"></a>
+                </li>
+                <li>
+                    <a href="viber://chat?number=%2B639950960349"><img src="contacts/viber.png" alt="Viber"></a>
+                </li>
+                <li>
+                    <a href="mailto:ibotpunay@gmail.com?subject=Hello&body=Hi%2C%20I%20wanted%20to%20contact%20you."><img src="contacts/email.png" alt="Email"></a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <div class="note-container">
+                © 2025 Glairozz Blair P. Punay
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
 </body>
+
 </html>

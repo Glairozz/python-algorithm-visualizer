@@ -1,0 +1,16 @@
+# Dependencies
+app/node_modules/
+node_modules/
+
+# Build output (app/dist is regenerated; the repo root copy is committed for GitHub Pages)
+app/dist/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Misc
+*.log
+.DS_Store

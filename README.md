@@ -1,212 +1,100 @@
-# Premium Algorithm Visualizer 🚀
+# Algorithm Visualizer
 
-A professional, educational algorithm visualization system built with Python that demonstrates how algorithms operate step-by-step using visual representations.
+An interactive, educational algorithm visualization tool. Step through sorting and searching algorithms with synchronized pseudocode, per-step explanations, and live complexity information — in a strict monochrome, developer-tool aesthetic.
 
-## ✨ Features
+**Live site:** https://glairozz.github.io/python-algorithm-visualizer/
 
-- **🎯 Step-by-Step Visualization**: Watch algorithms execute in real-time with detailed explanations
-- **🎮 Full Playback Control**: Play, pause, step forward/backward, reset, and adjust speed
-- **📚 Educational Content**: Comprehensive explanations for each algorithm and operation
-- **🌐 Dual Interface**: Both console and web-based interfaces
-- **🧪 Professional Architecture**: Strict layered separation for maintainability and extensibility
-- **✅ Thoroughly Tested**: Comprehensive test suite ensures correctness and reliability
-- **🎨 Modern UI**: Clean, responsive web interface with smooth animations
+## Features
 
-## 🏗️ Architecture
+- **Sorting:** Bubble, Selection, Insertion, Merge, Quick, Heap
+- **Searching:** Linear, Binary
+- Step-by-step playback: play / pause / next / previous / reset / seek via progress bar
+- Speed control: 0.25×, 0.5×, 1×, 2×, 4×
+- Synchronized pseudocode with the current line highlighted
+- Plain-language explanations for every operation ("why", not just "what")
+- Pointer annotations (`i`, `j`, `pivot`, `low`, `mid`, `high`) on the bars
+- Grayscale state language: white = idle, hatched = comparing, solid black = swap/found, gray = sorted, dashed = eliminated
+- Keyboard shortcuts: `Space` play/pause · `←`/`→` step · `R` reset · `G` new array
+- Accessible: keyboard navigation, ARIA labels, visible focus states, `prefers-reduced-motion` support, no color-only meaning
+- Fully responsive from mobile to desktop
 
-This project follows a strict layered architecture:
+## Tech stack
 
-### **Algorithm Logic Layer** (`algorithms/`)
-- Pure algorithm implementations focused on observability
-- Bubble Sort, Quick Sort, Merge Sort included
-- Easy to extend with additional algorithms
+- **React 19 + TypeScript (strict) + Vite**
+- Plain CSS design system (no UI framework)
+- **Vitest** for engine and UI smoke tests
+- UI-independent algorithm engine in `app/src/engine` and `app/src/algorithms`
 
-### **Step Abstraction Layer** (`core/`)
-- Converts algorithm operations into standardized steps
-- Step types: Compare, Swap, Overwrite, Mark Sorted, Highlight, Pivot, Merge
-- Timeline system for step sequencing and navigation
-
-### **Visualization Engine** (`visualization/`)
-- Timeline-based rendering engine
-- Playback controller with speed control
-- Multiple renderer support (Console, Web)
-
-### **User Interface Layer** (`web/`)
-- Flask web application with modern frontend
-- Console interface for terminal users
-- Educational explanations and complexity analysis
-
-## 🚀 Quick Start
-
-### **Prerequisites**
-- Python 3.7 or higher
-- pip package manager
-
-### **Installation**
-
-1. **Clone or navigate to the project directory:**
-   ```bash
-   cd "C:\Downloads\html,css,&js projects\Algorithm visualizer web\algorithm_visualizer"
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### **Running the Application**
-
-#### **Option 1: Web Interface (Recommended)**
-```bash
-cd "C:\Downloads\html,css,&js projects\Algorithm visualizer web"
-python run_web.py
-```
-Then open your browser and navigate to: **http://localhost:5000**
-
-#### **Option 2: Console Interface**
-```bash
-cd algorithm_visualizer
-python -m algorithm_visualizer
-```
-
-## 📖 Usage Guide
-
-### **Web Interface**
-
-1. **Select Algorithm**: Choose from Bubble Sort, Quick Sort, or Merge Sort
-2. **Configure Input**: Set array size (5-30 elements) using the slider
-3. **Generate Array**: Click "Generate Array" to create random data
-4. **Execute**: Click "Execute" to run the selected algorithm
-5. **Control Playback**: 
-   - Play/Pause: Start or stop automatic playback
-   - Step Controls: Navigate forward/backward one step at a time
-   - Speed Control: Adjust playback speed (0.1x to 3.0x)
-   - Reset: Return to the initial state
-
-### **Console Interface**
-
-1. **Select Algorithm**: Choose from the numbered menu (1-3)
-2. **Set Array Size**: Enter desired size (5-20, default: 10)
-3. **Interactive Commands**:
-   ```
-   play      - Start automatic playback
-   pause     - Pause playback
-   step      - Move one step forward
-   back      - Move one step backward
-   reset     - Reset to beginning
-   speed 2.0 - Set playback speed
-   quit      - Exit the program
-   ```
-
-### **Visual Indicators**
-
-- 🟢 **Green**: Sorted elements (final position)
-- 🔵 **Blue**: Currently highlighted regions
-- 🟠 **Orange**: Elements being compared
-- 🟣 **Purple**: Pivot element (Quick Sort)
-- ⚪ **White**: Unsorted/inactive elements
-
-## 🧪 Testing
-
-Run the comprehensive test suite:
+## Development
 
 ```bash
-cd algorithm_visualizer
-python -m pytest tests/ -v
+cd app
+npm install
+npm run dev        # local dev server
+npm test           # test suite (Vitest)
+npm run build      # typecheck + production build to app/dist
+npm run preview    # preview the production build
 ```
 
-Tests cover:
-- Algorithm correctness verification
-- Step sequence validation  
-- Timeline navigation functionality
-- Core component behavior
+## Deployment
 
-## 📊 Supported Algorithms
+GitHub Pages is served at https://glairozz.github.io/python-algorithm-visualizer/.
 
-| Algorithm | Best Time | Average Time | Worst Time | Space | Stable |
-|-----------|-----------|--------------|------------|-------|--------|
-| Bubble Sort | O(n) | O(n²) | O(n²) | O(1) | ✅ |
-| Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) | ❌ |
-| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) | ✅ |
+Two equivalent paths:
 
-## 🔧 Development
+1. **GitHub Actions** (recommended): `.github/workflows/deploy.yml` installs, tests, builds, and deploys `app/dist` on every push. Set the repo's Pages source to **GitHub Actions**.
+2. **Branch deploy (legacy-compatible):** the production build is committed at the repo root (`index.html` + `assets/`), so the existing *Deploy from branch* Pages setting serves the same app. After changing the app, refresh it with:
 
-### **Adding New Algorithms**
-
-1. Create a new class in `algorithms/` inheriting from `BaseAlgorithm`
-2. Implement the `execute()` method returning a `Timeline`
-3. Add standardized steps using the `Step` class
-4. Register the algorithm in the Flask app (`web/flask_app.py`)
-
-### **Step Types**
-
-```python
-Step.compare(i, j, explanation)        # Compare elements
-Step.swap(i, j, explanation)           # Swap elements
-Step.overwrite(i, value, explanation)  # Set element value
-Step.mark_sorted([i, j], explanation)  # Mark as sorted
-Step.highlight([i, j], explanation)    # Highlight region
-Step.pivot(i, explanation)             # Mark pivot
-Step.merge(range1, range2, explanation) # Merge ranges
+```bash
+cd app && npm run build && cp -r dist/* ..
 ```
 
-### **Project Structure**
+## Project structure
 
 ```
-algorithm_visualizer/
-├── core/                 # Step abstraction and timeline
-│   ├── step.py          # Step definitions
-│   ├── timeline.py      # Timeline management
-│   ├── array_state.py   # Array state tracking
-│   └── explanations.py  # Educational content
-├── algorithms/          # Algorithm implementations
-│   ├── base_algorithm.py
-│   ├── bubble_sort.py
-│   ├── quick_sort.py
-│   └── merge_sort.py
-├── visualization/       # Rendering and playback
-│   ├── engine.py        # Visualization engine
-│   ├── renderer.py      # Renderer implementations
-│   └── controller.py    # Playback controls
-├── web/                # Web interface
-│   ├── flask_app.py    # Flask backend
-│   ├── templates/      # HTML templates
-│   ├── static/         # CSS/JS assets
-│   └── app.py          # Console interface
-└── tests/              # Test suite
-    ├── test_algorithms.py
-    └── test_core.py
+app/
+├── index.html              # Vite entry
+├── vite.config.ts          # base: /python-algorithm-visualizer/
+└── src/
+    ├── main.tsx
+    ├── App.tsx
+    ├── algorithms/         # algorithm definitions + recorded steps
+    │   ├── index.ts        # registry
+    │   ├── recorder.ts     # step recording helper
+    │   ├── sorting/
+    │   └── searching/
+    ├── engine/
+    │   ├── types.ts        # Step / Frame / AlgorithmDefinition
+    │   └── playback.ts     # pure playback state machine
+    ├── hooks/
+    │   ├── useVisualizer.ts
+    │   └── useKeyboardShortcuts.ts
+    ├── components/
+    │   ├── layout/         # Header, Sidebar, StatusBar
+    │   ├── controls/       # ControlBar
+    │   ├── visualization/  # VisualizationCanvas, ArrayVisualizer
+    │   ├── algorithm/      # info, step explanation, pseudocode, complexity
+    │   └── common/
+    └── styles/globals.css  # monochrome design system
+legacy/                     # original Python/Flask implementation (archived)
 ```
 
-## 🎯 Educational Features
+## Adding an algorithm
 
-- **Step-by-Step Explanations**: Each operation includes contextual explanations
-- **Complexity Analysis**: Detailed time and space complexity information
-- **Algorithm Overviews**: High-level strategy and use case explanations
-- **Interactive Learning**: Control execution speed and examine each step
+1. Create `app/src/algorithms/<category>/myAlgorithm.ts` exporting an `AlgorithmDefinition`.
+2. Implement `generate(input, target?)` using `Recorder` to emit `Step`s with frame snapshots, pointers, `codeLine`, and a plain-English explanation.
+3. Register it in `app/src/algorithms/index.ts`.
 
-## 🌟 Premium Features
+The visualization, controls, pseudocode panel, and progress UI pick it up automatically.
 
-- **Professional UI**: Modern, responsive design with smooth animations
-- **Extensible Architecture**: Easy to add new algorithms and visualizers
-- **Performance Optimized**: Smooth playback even for larger arrays
-- **Educational Focus**: Designed as a learning platform, not just a demo
-- **Production Ready**: Thoroughly tested and professionally structured
+## Testing
 
-## 🤝 Contributing
+```bash
+cd app && npm test
+```
 
-This project demonstrates senior-level software engineering principles:
+Covers algorithm correctness across edge cases (empty, single element, sorted, reverse-sorted, duplicates, negatives, larger inputs), step-generation invariants, the playback state machine, and a jsdom smoke test that mounts the full app and steps through it.
 
-1. **Clean Architecture**: Strict separation of concerns
-2. **Extensibility**: Modular design for easy enhancement
-3. **Testing**: Comprehensive test coverage
-4. **Documentation**: Clear, educational explanations
-5. **User Experience**: Thoughtful interface design
+## Legacy
 
-## 📄 License
-
-This project is open-source and available for educational purposes. Feel free to use it as a reference for learning algorithms, software architecture, or web development.
-
----
-
-**Built with ❤️ for educational excellence**
+The original Python 3 / Flask implementation is archived under `legacy/` and no longer drives the deployed site.

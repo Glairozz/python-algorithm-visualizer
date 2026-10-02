@@ -6,9 +6,9 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #000;
     min-height: 100vh;
-    color: #333;
+    color: #fff;
 }
 
 .container {
@@ -20,7 +20,7 @@ body {
 header {
     text-align: center;
     margin-bottom: 30px;
-    color: white;
+    color: #fff;
 }
 
 header h1 {
@@ -37,39 +37,39 @@ header p {
 main {
     display: grid;
     grid-template-columns: 350px 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 20px;
     height: calc(100vh - 200px);
 }
 
 .controls-panel {
     grid-column: 1;
-    grid-row: 1 / -1;
-    background: white;
+    grid-row: 1;
+    background: #111;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     overflow-y: auto;
 }
 
 .visualization-panel {
     grid-column: 2;
-    grid-row: 1;
-    background: white;
+    grid-row: 1 / 3;
+    background: #111;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
 }
 
 .info-panel {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 2;
-    background: white;
+    background: #111;
+    border: 1px solid #333;
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     overflow-y: auto;
 }
 
@@ -81,27 +81,29 @@ main {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #555;
+    color: #ccc;
 }
 
 select, input[type="range"] {
     width: 100%;
     padding: 8px;
-    border: 2px solid #e1e5e9;
+    border: 2px solid #333;
     border-radius: 8px;
     font-size: 14px;
+    background: #222;
+    color: #fff;
     transition: border-color 0.3s;
 }
 
 select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #666;
 }
 
 button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
+    background: #333;
+    color: #fff;
+    border: 1px solid #555;
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
@@ -113,7 +115,8 @@ button {
 
 button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    background: #444;
+    border-color: #666;
 }
 
 button:disabled {
@@ -141,46 +144,46 @@ button:disabled {
     justify-content: center;
     height: 100%;
     width: 100%;
-    gap: 3px;
+    gap: 5px;
     padding: 20px;
 }
 
 .array-bar {
-    background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
-    color: white;
+    background: #666;
+    color: #fff;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
-    padding: 5px;
+    padding: 8px;
     border-radius: 4px 4px 0 0;
-    min-width: 30px;
+    min-width: 50px;
     transition: all 0.3s ease;
     position: relative;
 }
 
 .array-bar.comparing {
-    background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
+    background: #999;
     transform: scale(1.05);
 }
 
 .array-bar.sorted {
-    background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+    background: #444;
 }
 
 .array-bar.pivot {
-    background: linear-gradient(180deg, #9C27B0 0%, #7B1FA2 100%);
+    background: #888;
     transform: scale(1.1);
 }
 
 .array-bar.highlighted {
-    background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
+    background: #777;
     transform: scale(1.03);
 }
 
 .progress-container {
-    background: #e1e5e9;
+    background: #333;
     height: 8px;
     border-radius: 4px;
     overflow: hidden;
@@ -189,39 +192,39 @@ button:disabled {
 
 #progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: #666;
     width: 0%;
     transition: width 0.3s ease;
 }
 
 .algorithm-info h3 {
-    color: #667eea;
+    color: #999;
     margin-bottom: 10px;
 }
 
 .algorithm-complexity {
-    background: #f8f9fa;
+    background: #222;
     padding: 15px;
     border-radius: 8px;
     margin-top: 10px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #555;
 }
 
 .step-explanation {
-    background: #e3f2fd;
+    background: #222;
     padding: 15px;
     border-radius: 8px;
     margin-top: 20px;
-    border-left: 4px solid #2196F3;
+    border-left: 4px solid #555;
 }
 
 .step-explanation h4 {
-    color: #1976D2;
+    color: #999;
     margin-bottom: 8px;
 }
 
 .array-display {
-    background: #f8f9fa;
+    background: #222;
     padding: 15px;
     border-radius: 8px;
     margin-top: 20px;
@@ -235,7 +238,7 @@ button:disabled {
 
 #size-display, #speed-display, #step-counter {
     font-weight: 600;
-    color: #667eea;
+    color: #999;
 }
 
 @media (max-width: 1024px) {
@@ -263,8 +266,8 @@ button:disabled {
 
 .array-bar-value {
     position: absolute;
-    bottom: 5px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 10px;
+    font-size: 12px;
 }

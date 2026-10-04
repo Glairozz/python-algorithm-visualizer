@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      // GitHub Pages SPA fallback: stash the requested URL and bounce to the app root.
+      sessionStorage.setItem(
+        'pav-redirect',
+        location.pathname + location.search + location.hash,
+      );
+      location.replace('./');
+    </script>
+  </head>
+  <body></body>
+</html>

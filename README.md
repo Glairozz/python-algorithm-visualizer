@@ -36,6 +36,14 @@ npm run build      # typecheck + production build to app/dist
 npm run preview    # preview the production build
 ```
 
+## Landing page & routing
+
+`/` (and `/python-algorithm-visualizer/`) renders the landing page. `/visualizer`
+renders the existing visualizer (deep-link an algorithm with
+`/visualizer?algo=quick-sort`). The visualizer is lazy-loaded so the landing
+page never spins up app logic. GitHub Pages deep links work via a `404.html`
+fallback that restores the requested URL.
+
 ## Deployment
 
 GitHub Pages is served at https://glairozz.github.io/python-algorithm-visualizer/.

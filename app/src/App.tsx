@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { algorithmsByCategory } from './algorithms';
 import { useVisualizer } from './hooks/useVisualizer';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -15,6 +15,16 @@ import { AlgorithmInfo } from './components/algorithm/AlgorithmInfo';
 export function App() {
   const viz = useVisualizer();
   const grouped = useMemo(() => algorithmsByCategory(), []);
+
+  // Deep link support: /visualizer?algo=quick-sort
+  const appliedInitialAlgo = useRef(false);
+  useEffect(() => {
+    if (appliedInitialAlgo.current) return;
+    appliedInitialAlgo.current = true;
+    const algo = new URLSearchParams(window.location.search).get('algo');
+    if (algo) viz.selectAlgorithm(algo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useKeyboardShortcuts({
     togglePlay: viz.togglePlay,
